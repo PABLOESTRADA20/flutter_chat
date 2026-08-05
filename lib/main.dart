@@ -15,7 +15,7 @@ class IntelligenceApp extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
         scaffoldBackgroundColor: AppColors.background,
-        colorScheme: ColorScheme.light(
+        colorScheme: const ColorScheme.light(
           primary: AppColors.primary,
           onPrimary: AppColors.onPrimary,
           surface: AppColors.surface,

@@ -4,12 +4,14 @@ import 'package:flutter/material.dart';
 import '../models/chat_message.dart';
 import '../theme/app_colors.dart';
 import '../widgets/ai_bubble.dart';
+import '../widgets/app_sidebar.dart';
 import '../widgets/bottom_input_area.dart';
-import '../widgets/intro_header.dart';
-import '../widgets/sidebar.dart';
+import '../widgets/landing_input_card.dart';
 import '../widgets/top_app_bar.dart';
 import '../widgets/typing_indicator.dart';
 import '../widgets/user_bubble.dart';
+import 'profile_screen.dart';
+import 'settings_screen.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -22,24 +24,10 @@ class _ChatScreenState extends State<ChatScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController _controller = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  int _selectedTab = 0; // 0 = GPT-4, 1 = Claude 3, 2 = Gemini
+  String _selectedModel = 'Blu Light';
   bool _isTyping = false;
 
-  final List<ChatMessage> _messages = [
-    ChatMessage(
-      sender: Sender.user,
-      text: 'Hola, ¿puedes ayudarme a programar una función en Python?',
-    ),
-    ChatMessage(
-      sender: Sender.ai,
-      text:
-          '¡Hola! Por supuesto. ¿Qué tipo de función necesitas? Puedo ayudarte con lógica, procesamiento de datos o integración de APIs.',
-      cards: const [
-        SuggestionCard('Logic Example', 'Create a recursive sorting algorithm.'),
-        SuggestionCard('API Integration', 'Fetch weather data using a REST client.'),
-      ],
-    ),
-  ];
+  final List<ChatMessage> _messages = [];
 
   void _scrollToBottom() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -68,8 +56,8 @@ class _ChatScreenState extends State<ChatScreen> {
         _isTyping = false;
         _messages.add(ChatMessage(
           sender: Sender.ai,
-          text: '¡Listo! Respuesta simulada para "$text". Conecta tu backend '
-              'para obtener una respuesta real.',
+          text: '¡Listo! Respuesta simulada para "$text" (modelo '
+              '$_selectedModel). Conecta tu backend para obtener una respuesta real.',
           cards: const [
             SuggestionCard('Logic Example', 'Create a recursive sorting algorithm.'),
             SuggestionCard('API Integration', 'Fetch weather data using a REST client.'),
@@ -86,50 +74,95 @@ class _ChatScreenState extends State<ChatScreen> {
     final isWide = MediaQuery.of(context).size.width >= 768;
     final hasUserMessages = _messages.any((m) => m.sender == Sender.user);
 
+    void openSettings() {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const SettingsScreen()),
+      );
+    }
+
+    void openProfile() {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const ProfileScreen()),
+      );
+    }
+
+    void handleSidebarSelect(AppSidebarItem item) {
+      switch (item) {
+        case AppSidebarItem.settings:
+          openSettings();
+        case AppSidebarItem.profile:
+          openProfile();
+        case AppSidebarItem.newChat:
+          break;
+      }
+    }
+
     return Scaffold(
       key: _scaffoldKey,
-      backgroundColor: AppColors.background,
-      drawer: isWide ? null : const Sidebar(),
+      backgroundColor: AppColorsDark.background,
+      drawer: isWide ? null : AppSidebar(onSelect: handleSidebarSelect),
       body: Row(
         children: [
-          if (isWide) const Sidebar(),
+          if (isWide) AppSidebar(onSelect: handleSidebarSelect),
           Expanded(
             child: Column(
               children: [
-                TopAppBar(
-                  isWide: isWide,
-                  selectedTab: _selectedTab,
-                  onTabSelected: (i) => setState(() => _selectedTab = i),
-                  onMenuTap: () => _scaffoldKey.currentState?.openDrawer(),
-                ),
-                Expanded(
-                  child: ListView(
-                    controller: _scrollController,
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 32),
-                    children: [
-                      if (!hasUserMessages) ...[
-                        const IntroHeader(),
-                        const SizedBox(height: 24),
-                      ],
-                      ..._messages.map((m) => Padding(
-                            padding: const EdgeInsets.only(bottom: 24),
-                            child: m.sender == Sender.user
-                                ? UserBubble(text: m.text)
-                                : AiBubble(text: m.text, cards: m.cards),
-                          )),
-                      if (_isTyping)
-                        const Padding(
-                          padding: EdgeInsets.only(bottom: 24),
-                          child: TypingIndicator(),
-                        ),
-                    ],
+                if (!isWide)
+                  TopAppBar(
+                    onMenuTap: () => _scaffoldKey.currentState?.openDrawer(),
+                    onSettingsTap: openSettings,
                   ),
+                Expanded(
+                  child: hasUserMessages
+                      ? ListView(
+                          controller: _scrollController,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 32),
+                          children: [
+                            ..._messages.map((m) => Padding(
+                                  padding: const EdgeInsets.only(bottom: 24),
+                                  child: m.sender == Sender.user
+                                      ? UserBubble(text: m.text)
+                                      : AiBubble(text: m.text, cards: m.cards),
+                                )),
+                            if (_isTyping)
+                              const Padding(
+                                padding: EdgeInsets.only(bottom: 24),
+                                child: TypingIndicator(),
+                              ),
+                          ],
+                        )
+                      : LayoutBuilder(
+                          builder: (context, constraints) {
+                            return SingleChildScrollView(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 32),
+                              child: ConstrainedBox(
+                                constraints: BoxConstraints(
+                                    minHeight: constraints.maxHeight - 64),
+                                child: Center(
+                                  child: LandingInputCard(
+                                    controller: _controller,
+                                    onSend: _sendMessage,
+                                    model: _selectedModel,
+                                    onModelChanged: (m) =>
+                                        setState(() => _selectedModel = m),
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
                 ),
-                BottomInputArea(
-                  controller: _controller,
-                  onSend: _sendMessage,
-                ),
+                if (hasUserMessages)
+                  BottomInputArea(
+                    controller: _controller,
+                    onSend: _sendMessage,
+                    model: _selectedModel,
+                    onModelChanged: (m) => setState(() => _selectedModel = m),
+                  ),
               ],
             ),
           ),

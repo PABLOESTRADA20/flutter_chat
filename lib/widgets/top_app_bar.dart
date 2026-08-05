@@ -1,83 +1,60 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
+import '../theme/app_text_styles.dart';
 
+/// Top bar móvil del chat: menú, logo y "soybluia" a la izquierda;
+/// settings y ayuda a la derecha. Solo se muestra en pantallas angostas.
 class TopAppBar extends StatelessWidget {
-  final bool isWide;
-  final int selectedTab;
-  final ValueChanged<int> onTabSelected;
   final VoidCallback? onMenuTap;
+  final VoidCallback? onSettingsTap;
 
-  const TopAppBar({
-    super.key,
-    required this.isWide,
-    required this.selectedTab,
-    required this.onTabSelected,
-    this.onMenuTap,
-  });
+  const TopAppBar({super.key, this.onMenuTap, this.onSettingsTap});
 
   @override
   Widget build(BuildContext context) {
-    const tabs = ['GPT-4', 'Claude 3', 'Gemini'];
     return Container(
       height: 64,
-      padding: const EdgeInsets.symmetric(horizontal: 24),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
-        color: AppColors.background.withOpacity(0.8),
-        border: Border(bottom: BorderSide(color: AppColors.outlineVariant.withOpacity(0.2))),
+        color: AppColorsDark.background,
+        border: Border(
+            bottom:
+                BorderSide(color: AppColorsDark.outlineVariant.withValues(alpha: 0.2))),
       ),
       child: Row(
         children: [
-          if (!isWide) ...[
-            IconButton(
-              icon: const Icon(Icons.menu, color: AppColors.onSurface),
-              onPressed: onMenuTap,
-              tooltip: 'Abrir menú',
-            ),
-            const SizedBox(width: 4),
-            const Text('Intelligence',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-          ],
-          if (isWide)
-            Expanded(
-              child: Row(
-                children: List.generate(tabs.length, (i) {
-                  final selected = i == selectedTab;
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 32),
-                    child: InkWell(
-                      onTap: () => onTabSelected(i),
-                      child: Container(
-                        padding: const EdgeInsets.only(bottom: 4),
-                        decoration: BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(
-                              color: selected ? AppColors.primary : Colors.transparent,
-                              width: 2,
-                            ),
-                          ),
-                        ),
-                        child: Text(
-                          tabs[i],
-                          style: TextStyle(
-                            color: selected ? AppColors.primary : AppColors.onSurfaceVariant,
-                            fontWeight: selected ? FontWeight.bold : FontWeight.normal,
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
-                }),
-              ),
-            )
-          else
-            const Spacer(),
           IconButton(
-            icon: const Icon(Icons.share, color: AppColors.onSurfaceVariant, size: 20),
-            onPressed: () {},
+            icon: const Icon(Icons.menu, color: AppColorsDark.onSurface),
+            onPressed: onMenuTap,
+            tooltip: 'Abrir menú',
+          ),
+          Container(
+            width: 32,
+            height: 32,
+            decoration: BoxDecoration(
+              color: AppColorsDark.primaryContainer,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            alignment: Alignment.center,
+            child: const Icon(Icons.auto_awesome,
+                size: 16, color: Colors.white),
+          ),
+          const SizedBox(width: 12),
+          Text('soybluia',
+              style: kHeadlineMd.copyWith(
+                  color: AppColorsDark.onSurface, fontWeight: FontWeight.bold)),
+          const Spacer(),
+          IconButton(
+            icon: const Icon(Icons.settings_outlined,
+                size: 20, color: AppColorsDark.onSurfaceVariant),
+            onPressed: onSettingsTap,
+            tooltip: 'Configuración',
           ),
           IconButton(
-            icon: const Icon(Icons.more_vert, color: AppColors.onSurfaceVariant, size: 20),
+            icon: const Icon(Icons.help_outline,
+                size: 20, color: AppColorsDark.onSurfaceVariant),
             onPressed: () {},
+            tooltip: 'Ayuda',
           ),
         ],
       ),

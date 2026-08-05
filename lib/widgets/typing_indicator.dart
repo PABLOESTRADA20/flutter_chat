@@ -30,19 +30,19 @@ class _TypingIndicatorState extends State<TypingIndicator>
           width: 32,
           height: 32,
           decoration: BoxDecoration(
-            color: AppColors.surfaceContainerHighest,
+            color: AppColorsDark.surfaceContainerHighest,
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: AppColors.outlineVariant.withOpacity(0.3)),
+            border: Border.all(color: AppColorsDark.outlineVariant.withValues(alpha: 0.3)),
           ),
-          child: const Icon(Icons.bolt, color: AppColors.primary, size: 16),
+          child: const Icon(Icons.bolt, color: AppColorsDark.primary, size: 16),
         ),
         const SizedBox(width: 16),
         Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: AppColors.surfaceContainerLow,
+            color: AppColorsDark.surfaceContainerLow,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: AppColors.outlineVariant.withOpacity(0.2)),
+            border: Border.all(color: AppColorsDark.outlineVariant.withValues(alpha: 0.2)),
           ),
           child: AnimatedBuilder(
             animation: _controller,
@@ -61,7 +61,7 @@ class _TypingIndicatorState extends State<TypingIndicator>
                         width: 8,
                         height: 8,
                         decoration: const BoxDecoration(
-                          color: AppColors.onSurfaceVariant,
+                          color: AppColorsDark.onSurfaceVariant,
                           shape: BoxShape.circle,
                         ),
                       ),

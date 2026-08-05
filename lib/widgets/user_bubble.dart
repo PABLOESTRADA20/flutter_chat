@@ -16,10 +16,10 @@ class UserBubble extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               decoration: BoxDecoration(
-                color: AppColors.primaryContainer,
+                color: AppColorsDark.primaryContainer,
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: const [
-                  BoxShadow(color: Colors.black12, blurRadius: 6, offset: Offset(0, 2))
+                  BoxShadow(color: Colors.black26, blurRadius: 6, offset: Offset(0, 2))
                 ],
               ),
               child: Text(text,
@@ -29,11 +29,11 @@ class UserBubble extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 4),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 8),
           child: Text('SENT',
               style: TextStyle(
-                  fontSize: 10, color: AppColors.onSurfaceVariant, letterSpacing: 1)),
+                  fontSize: 10, color: AppColorsDark.onSurfaceVariant, letterSpacing: 1)),
         ),
       ],
     );

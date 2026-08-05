@@ -27,3 +27,13 @@ flutter:
           weight: 500
         - asset: assets/fonts/Inter-Bold.ttf
           weight: 700
+    - family: Geist
+      fonts:
+        - asset: assets/fonts/Geist.ttf
+          weight: 400
+        - asset: assets/fonts/Geist.ttf
+          weight: 600
+    - family: JetBrainsMono
+      fonts:
+        - asset: assets/fonts/JetBrainsMono.ttf
+          weight: 400

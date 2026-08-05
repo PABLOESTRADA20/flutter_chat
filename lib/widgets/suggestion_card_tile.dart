@@ -14,19 +14,26 @@ class SuggestionCardTile extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColorsDark.surfaceContainerHigh,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.outlineVariant.withOpacity(0.3)),
-          boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 1))],
+          border:
+              Border.all(color: AppColorsDark.outlineVariant.withValues(alpha: 0.3)),
+          boxShadow: const [
+            BoxShadow(color: Colors.black26, blurRadius: 4, offset: Offset(0, 1))
+          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(card.title,
-                style: const TextStyle(color: AppColors.primary, fontSize: 12, fontWeight: FontWeight.w500)),
+                style: const TextStyle(
+                    color: AppColorsDark.primary,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500)),
             const SizedBox(height: 4),
             Text(card.subtitle,
-                style: TextStyle(fontSize: 12, color: AppColors.onSurfaceVariant)),
+                style: const TextStyle(
+                    fontSize: 12, color: AppColorsDark.onSurfaceVariant)),
           ],
         ),
       ),
